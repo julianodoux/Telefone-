@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Adicionar Cliente</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #004a63, #012c3f);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background-color: white;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 400px;
+      padding: 30px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 20px;
+      color: #004a63;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      background-color: #00796b;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .mensagem {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Adicionar Cliente</h2>
+    <input type="text" id="nome" placeholder="Nome completo" />
+    <input type="text" id="telefone" placeholder="(00)00000-0000" maxlength="15" oninput="mascaraTelefone(this)" />
+    <input type="text" id="link" placeholder="Link de renovação" />
+    <button onclick="adicionarCliente()">Salvar Cliente</button>
+    <div class="mensagem" id="mensagem"></div>
+  </div>
+
+  <script>
+    function mascaraTelefone(input) {
+      let valor = input.value.replace(/\D/g, '');
+      if (valor.length > 10) {
+        valor = valor.replace(/(\d{2})(\d{5})(\d{4})/, '($1)$2-$3');
+      } else {
+        valor = valor.replace(/(\d{2})(\d{4})(\d{4})/, '($1)$2-$3');
+      }
+      input.value = valor;
+    }
+
+    function adicionarCliente() {
+      const nome = document.getElementById("nome").value.trim();
+      const telefone = document.getElementById("telefone").value.replace(/\D/g, '').trim();
+      const link = document.getElementById("link").value.trim();
+      const mensagem = document.getElementById("mensagem");
+
+      if (!nome || !telefone || !link || telefone.length < 10) {
+        mensagem.innerText = "Preencha todos os campos corretamente.";
+        mensagem.style.color = "red";
+        return;
+      }
+
+      const novosClientes = JSON.parse(localStorage.getItem("clientesExtras")) || {};
+      novosClientes[telefone] = [nome, link];
+      localStorage.setItem("clientesExtras", JSON.stringify(novosClientes));
+
+      mensagem.innerText = "Cliente adicionado com sucesso!";
+      mensagem.style.color = "green";
+
+      // Limpa campos
+      document.getElementById("nome").value = "";
+      document.getElementById("telefone").value = "";
+      document.getElementById("link").value = "";
+    }
+  </script>
+</body>
+</html>
